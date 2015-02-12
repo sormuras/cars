@@ -15,28 +15,20 @@ import javax.servlet.http.HttpServletResponse;
 public class CarsServlet extends HttpServlet implements ServletContextListener {
 
   private static final long serialVersionUID = 1L;
-  
+
   private int counter = 0;
 
   @Override
   protected void doGet(HttpServletRequest req, HttpServletResponse response) throws ServletException, IOException {
     response.setContentType("text/event-stream");
     response.setCharacterEncoding("UTF-8");
+    response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate"); // HTTP 1.1.
+    response.setHeader("Pragma", "no-cache"); // HTTP 1.0.
+    response.setDateHeader("Expires", 0); // Proxies.
 
     PrintWriter writer = response.getWriter();
-
-//    for (int i = 0; i < 10; i++) {
-
-      writer.write("data: " + counter++ + " " + System.currentTimeMillis() + "\n\n");
-      writer.flush();
-
-//      try {
-//        Thread.sleep(1000);
-//      } catch (InterruptedException e) {
-//        e.printStackTrace();
-//      }
-//    }
-    // writer.close();
+    writer.write("data: " + counter++ + " " + System.currentTimeMillis() + "\n\n");
+    writer.flush();
   }
 
   @Override

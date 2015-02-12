@@ -1,16 +1,18 @@
-Cars!
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+</head>
+<body>
 
-State: <span id="state"></span>
- 
-<br><br>
+  <script>
+    var source = new EventSource('/state');
+    source.onmessage = function(e) {
+      document.body.innerHTML += e.data + '<br>';
+    };
+  </script>
+  
+  Cars!
 
-<button onclick="start()">Start</button>
- 
-<script type="text/javascript">
-function start() {
-  var eventSource = new EventSource("state");
-  eventSource.onmessage = function(event) {
-    document.getElementById('state').innerHTML=event.data;
-  };
-}
-</script>
+</body>
+</html>
