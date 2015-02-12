@@ -54,12 +54,15 @@ public class CarsServlet extends HttpServlet implements ServletContextListener {
     System.out.println(event.toString());
     
     String path = event.getServletContext().getRealPath("/");
+    
+   
 
     worker = new Thread(() -> {
       Inbox.running = true;
       try {
         Inbox.main(new String[0]);
       } catch (Exception e) {
+        event.getServletContext().log(e.toString());
         try {
           Files.write(new File(path, "exception.txt").toPath(), e.toString().getBytes());
         } catch (Exception e1) {
