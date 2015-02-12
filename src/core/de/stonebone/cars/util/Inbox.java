@@ -4,11 +4,10 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.nio.ByteBuffer;
 
-
 /*
-#!/bin/bash
+ #!/bin/bash
 
-java \
+ java \
  -Djava.rmi.server.hostname=85.25.48.124 \
  -Dcom.sun.management.jmxremote \
  -Dcom.sun.management.jmxremote.port=1099 \
@@ -19,24 +18,25 @@ java \
  de.stonebone.cars.util.Inbox
  */
 public class Inbox {
-  
-  public static Configuration[] cons;
-  
+
+  public static final Configuration[] cons;
+
   public static boolean running = true;
+
+  static {
+    cons = new Configuration[4];
+    for (int id = 0; id < cons.length; id++) {
+      cons[id] = new Configuration();
+      cons[id].id = id;
+    }
+  }
 
   public static void main(String[] args) throws Exception {
 
     int port = 4231;
-    int maxPlayers = 4;
     int serial = 0;
 
     try (DatagramSocket socket = new DatagramSocket(port)) {
-
-      cons = new Configuration[maxPlayers];
-      for (int id = 0; id < cons.length; id++) {
-        cons[id] = new Configuration();
-        cons[id].id = id;
-      }
 
       ByteBuffer in = ByteBuffer.allocate(10);
       DatagramPacket client = new DatagramPacket(in.array(), in.capacity());
@@ -82,7 +82,7 @@ public class Inbox {
 
         socket.send(server);
       }
-      
+
       System.out.println("Run out.");
     }
 
