@@ -8,13 +8,13 @@
   <script>
     var source = new EventSource('/state');
     source.onmessage = function(e) {
-      document.getElementById("state").innerHTML = e.data + " origin: " + e.origin;
+      document.getElementById("state").innerHTML = "data: " + e.data + " origin: " + e.origin;
     };
   </script>
   
   <h1>Cars!</h1>
   
-  state: <div id="state">-</div>
+  <div id="state">-</div>
 
 </body>
 </html>

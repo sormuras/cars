@@ -11,6 +11,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import de.stonebone.cars.util.Inbox;
+
 @WebServlet(urlPatterns = "/state")
 public class CarsServlet extends HttpServlet implements ServletContextListener {
 
@@ -34,11 +36,18 @@ public class CarsServlet extends HttpServlet implements ServletContextListener {
   @Override
   public void contextDestroyed(ServletContextEvent event) {
     System.out.println(event.toString());
+    Inbox.running = false;
   }
 
   @Override
   public void contextInitialized(ServletContextEvent event) {
     System.out.println(event.toString());
+    Inbox.running = true;
+    try {
+      Inbox.main(new String[0]);
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
   }
 
 }

@@ -19,6 +19,8 @@ java \
  de.stonebone.cars.util.Inbox
  */
 public class Inbox {
+  
+  public static boolean running = true;
 
   public static void main(String[] args) throws Exception {
 
@@ -40,7 +42,7 @@ public class Inbox {
       DatagramPacket server = new DatagramPacket(out.array(), out.capacity());
 
       System.out.println("The server is ready...");
-      while (true) {
+      while (running) {
         socket.receive(client);
         in.position(client.getLength());
         in.flip();
@@ -78,6 +80,8 @@ public class Inbox {
 
         socket.send(server);
       }
+      
+      System.out.println("Run out.");
     }
 
   }
