@@ -13,7 +13,7 @@ public class Sender {
 
   public static void main(String[] args) throws Exception {
 
-    InetAddress host = InetAddress.getLoopbackAddress(); // InetAddress.getByName("stonebone.de");
+    InetAddress host = InetAddress.getByName("stonebone.de");
     int port = 4231;
 
     byte id = Byte.valueOf(args[0]);

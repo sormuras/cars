@@ -20,6 +20,8 @@ public class CarsServlet extends HttpServlet implements ServletContextListener {
 
   private int counter = 0;
 
+  private Thread worker;
+
   @Override
   protected void doGet(HttpServletRequest req, HttpServletResponse response) throws ServletException, IOException {
     response.setContentType("text/event-stream");
@@ -37,17 +39,29 @@ public class CarsServlet extends HttpServlet implements ServletContextListener {
   public void contextDestroyed(ServletContextEvent event) {
     System.out.println(event.toString());
     Inbox.running = false;
+
+    try {
+      Thread.sleep(333);
+    } catch (InterruptedException e) {
+      //
+    }
   }
 
   @Override
   public void contextInitialized(ServletContextEvent event) {
     System.out.println(event.toString());
-    Inbox.running = true;
-    try {
-      Inbox.main(new String[0]);
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
+
+    worker = new Thread(() -> {
+      Inbox.running = true;
+      try {
+        Inbox.main(new String[0]);
+      } catch (Exception e) {
+        //
+      }
+    });
+
+    worker.setDaemon(true);
+    worker.start();
   }
 
 }
