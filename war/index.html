@@ -9,12 +9,22 @@
     var source = new EventSource('/state');
     source.onmessage = function(e) {
       document.getElementById("state").innerHTML = "data: " + e.data + " origin: " + e.origin;
+      
+      var canvas = document.getElementById("canvas").getContext("2d");
+      canvas.fillStyle = "#FF0000";
+      canvas.fillRect(0, 0, Math.floor(Math.random() * 200) + 1, Math.floor(Math.random() * 100) + 1);
     };
   </script>
   
   <h1>Cars!</h1>
   
   <div id="state">-</div>
+  
+  <div align="center">
+  <canvas id="canvas" width="200" height="100" style="border:1px solid #c3c3c3;">
+    Your browser does not support the HTML5 canvas tag.
+  </canvas>
+  </div>
 
 </body>
 </html>
