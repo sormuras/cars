@@ -12,9 +12,9 @@
       
       var context = document.getElementById("canvas").getContext("2d");
       context.fillStyle = "#3C5884";
-      context.fillRect(0, 0, Math.floor(Math.random() * 200) + 1, Math.floor(Math.random() * 100) + 1);
+      context.fillRect(0, 0, context.width, context.height);
       context.fillStyle = "#C3B77A";
-      context.fillRect(0, 0, Math.floor(Math.random() * 200) + 1, Math.floor(Math.random() * 100) + 1);
+      context.fillRect(0, 0, Math.floor(Math.random() * context.width) + 1, Math.floor(Math.random() * context.height) + 1);
     };
   </script>
   
