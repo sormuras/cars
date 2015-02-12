@@ -1,7 +1,9 @@
 package de.stonebone.cars.server;
 
 import java.io.IOException;
+import java.io.File;
 import java.io.PrintWriter;
+import java.nio.file.Files;
 
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
@@ -56,9 +58,14 @@ public class CarsServlet extends HttpServlet implements ServletContextListener {
       try {
         Inbox.main(new String[0]);
       } catch (Exception e) {
-        //
+        try {
+          Files.write(new File("exception.txt").toPath(), e.toString().getBytes());
+        } catch (Exception e1) {
+          // ignore
+        }
       }
     });
+    
 
     worker.setDaemon(true);
     worker.start();
