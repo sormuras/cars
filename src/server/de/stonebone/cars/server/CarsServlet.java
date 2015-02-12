@@ -28,6 +28,7 @@ public class CarsServlet extends HttpServlet implements ServletContextListener {
   private Thread worker;
 
   StringBuilder builder = new StringBuilder();
+
   @Override
   protected void doGet(HttpServletRequest req, HttpServletResponse response) throws ServletException, IOException {
     response.setContentType("text/event-stream");
@@ -39,13 +40,14 @@ public class CarsServlet extends HttpServlet implements ServletContextListener {
     builder.setLength(0);
     builder.append("data:");
     builder.append(counter);
-    
+
     Configuration[] cons = Inbox.cons;
-    for (int id = 0; id < cons.length; id++) {
-      builder.append(",").append(id);
-      builder.append(",").append(cons[id].steering);
-      builder.append(",").append(cons[id].throttle);
-    }
+    if (cons != null)
+      for (int id = 0; id < cons.length; id++) {
+        builder.append(",").append(id);
+        builder.append(",").append(cons[id].steering);
+        builder.append(",").append(cons[id].throttle);
+      }
     builder.append("\n\n");
 
     PrintWriter writer = response.getWriter();
@@ -68,10 +70,8 @@ public class CarsServlet extends HttpServlet implements ServletContextListener {
   @Override
   public void contextInitialized(ServletContextEvent event) {
     System.out.println(event.toString());
-    
+
     String path = event.getServletContext().getRealPath("/");
-    
-   
 
     worker = new Thread(() -> {
       Inbox.running = true;
@@ -83,10 +83,9 @@ public class CarsServlet extends HttpServlet implements ServletContextListener {
           Files.write(new File(path, "exception.txt").toPath(), e.toString().getBytes());
         } catch (Exception e1) {
           // ignore
-        }
       }
-    });
-    
+    }
+  } );
 
     worker.setDaemon(true);
     worker.start();
