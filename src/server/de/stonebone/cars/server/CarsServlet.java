@@ -15,6 +15,8 @@ import javax.servlet.http.HttpServletResponse;
 public class CarsServlet extends HttpServlet implements ServletContextListener {
 
   private static final long serialVersionUID = 1L;
+  
+  private int counter = 0;
 
   @Override
   protected void doGet(HttpServletRequest req, HttpServletResponse response) throws ServletException, IOException {
@@ -23,17 +25,17 @@ public class CarsServlet extends HttpServlet implements ServletContextListener {
 
     PrintWriter writer = response.getWriter();
 
-    for (int i = 0; i < 10; i++) {
+//    for (int i = 0; i < 10; i++) {
 
-      writer.write("data: " + i + " " + System.currentTimeMillis() + "\n\n");
+      writer.write("data: " + counter++ + " " + System.currentTimeMillis() + "\n\n");
       writer.flush();
 
-      try {
-        Thread.sleep(1000);
-      } catch (InterruptedException e) {
-        e.printStackTrace();
-      }
-    }
+//      try {
+//        Thread.sleep(1000);
+//      } catch (InterruptedException e) {
+//        e.printStackTrace();
+//      }
+//    }
     // writer.close();
   }
 
