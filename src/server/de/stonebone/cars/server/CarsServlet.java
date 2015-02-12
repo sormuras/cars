@@ -52,6 +52,8 @@ public class CarsServlet extends HttpServlet implements ServletContextListener {
   @Override
   public void contextInitialized(ServletContextEvent event) {
     System.out.println(event.toString());
+    
+    String path = event.getServletContext().getRealPath("/");
 
     worker = new Thread(() -> {
       Inbox.running = true;
@@ -59,7 +61,7 @@ public class CarsServlet extends HttpServlet implements ServletContextListener {
         Inbox.main(new String[0]);
       } catch (Exception e) {
         try {
-          Files.write(new File("exception.txt").toPath(), e.toString().getBytes());
+          Files.write(new File(path, "exception.txt").toPath(), e.toString().getBytes());
         } catch (Exception e1) {
           // ignore
         }
