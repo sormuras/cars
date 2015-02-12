@@ -10,11 +10,12 @@
     source.onmessage = function(e) {
       document.getElementById("state").innerHTML = "data: " + e.data + " origin: " + e.origin;
       
-      var context = document.getElementById("canvas").getContext("2d");
+      var canvas = document.getElementById("canvas");
+      var context = canvas.getContext("2d");
       context.fillStyle = "#3C5884";
-      context.fillRect(0, 0, context.width, context.height);
+      context.fillRect(0, 0, canvas.width, canvas.height);
       context.fillStyle = "#C3B77A";
-      context.fillRect(0, 0, Math.floor(Math.random() * context.width) + 1, Math.floor(Math.random() * context.height) + 1);
+      context.fillRect(0, 0, Math.floor(Math.random() * canvas.width) + 1, Math.floor(Math.random() * canvas.height) + 1);
     };
   </script>
   
