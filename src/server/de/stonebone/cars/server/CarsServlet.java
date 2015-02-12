@@ -29,6 +29,7 @@ public class CarsServlet extends HttpServlet implements ServletContextListener {
     for(int i=0; i<10; i++) {
 
         writer.write("data: "+ System.currentTimeMillis() +"\n\n");
+        writer.flush();
 
         try {
             Thread.sleep(1000);
