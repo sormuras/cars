@@ -1,0 +1,16 @@
+Cars!
+
+State: <span id="state"></span>
+ 
+<br><br>
+
+<button onclick="start()">Start</button>
+ 
+<script type="text/javascript">
+function start() {
+  var eventSource = new EventSource("state");
+  eventSource.onmessage = function(event) {
+    document.getElementById('state').innerHTML=event.data;
+  };
+}
+</script>
