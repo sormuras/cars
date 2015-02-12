@@ -8,6 +8,7 @@ import java.nio.file.Files;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 import javax.servlet.ServletException;
+import javax.servlet.annotation.WebListener;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -16,6 +17,7 @@ import javax.servlet.http.HttpServletResponse;
 import de.stonebone.cars.util.Inbox;
 
 @WebServlet(urlPatterns = "/state")
+@WebListener
 public class CarsServlet extends HttpServlet implements ServletContextListener {
 
   private static final long serialVersionUID = 1L;
