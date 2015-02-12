@@ -2,6 +2,7 @@
 <html>
 <head>
   <meta charset="utf-8" />
+  <title>Cars!</title>
 </head>
 <body>
   
@@ -15,13 +16,16 @@
   </canvas>
   </div>
   
-  <script>
+  <script type="text/javascript">
     var canvas = document.getElementById("canvas");
     var context = canvas.getContext("2d");
     
     var source = new EventSource('/state');
     source.onmessage = function(e) {
       document.getElementById("state").innerHTML = "data: " + e.data + " origin: " + e.origin;
+      
+      var data = e.data.split(",");
+      console.log(data);
       
       context.fillStyle = "#3C5884";
       context.fillRect(0, 0, canvas.width, canvas.height);

@@ -20,6 +20,8 @@ java \
  */
 public class Inbox {
   
+  public static Configuration[] cons;
+  
   public static boolean running = true;
 
   public static void main(String[] args) throws Exception {
@@ -30,7 +32,7 @@ public class Inbox {
 
     try (DatagramSocket socket = new DatagramSocket(port)) {
 
-      Configuration[] cons = new Configuration[maxPlayers];
+      cons = new Configuration[maxPlayers];
       for (int id = 0; id < cons.length; id++) {
         cons[id] = new Configuration();
         cons[id].id = id;

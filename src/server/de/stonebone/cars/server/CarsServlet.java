@@ -14,6 +14,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import de.stonebone.cars.util.Configuration;
 import de.stonebone.cars.util.Inbox;
 
 @WebServlet(urlPatterns = "/state")
@@ -26,6 +27,7 @@ public class CarsServlet extends HttpServlet implements ServletContextListener {
 
   private Thread worker;
 
+  StringBuilder builder = new StringBuilder();
   @Override
   protected void doGet(HttpServletRequest req, HttpServletResponse response) throws ServletException, IOException {
     response.setContentType("text/event-stream");
@@ -34,8 +36,20 @@ public class CarsServlet extends HttpServlet implements ServletContextListener {
     response.setHeader("Pragma", "no-cache"); // HTTP 1.0.
     response.setDateHeader("Expires", 0); // Proxies.
 
+    builder.setLength(0);
+    builder.append("data:");
+    builder.append(counter);
+    
+    Configuration[] cons = Inbox.cons;
+    for (int id = 0; id < cons.length; id++) {
+      builder.append(",").append(id);
+      builder.append(",").append(cons[id].steering);
+      builder.append(",").append(cons[id].throttle);
+    }
+    builder.append("\n\n");
+
     PrintWriter writer = response.getWriter();
-    writer.write("data: " + counter++ + " " + System.currentTimeMillis() + "\n\n");
+    writer.write(builder.toString());
     writer.flush();
   }
 
