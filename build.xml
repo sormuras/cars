@@ -36,7 +36,9 @@
 				<exclude name="servlet-api-3.1.0.jar" />
 			</lib>
 			<classes dir="${dir.out}/classes" />
-			<fileset dir="war"/>
+			<fileset dir="war">
+				<exclude name="WEB-INF/lib/**/*" />
+			</fileset>
 		</war>
 	</target>
 
