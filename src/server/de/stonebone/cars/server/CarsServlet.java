@@ -24,14 +24,12 @@ public class CarsServlet extends HttpServlet implements ServletContextListener {
 
   private int counter = 0;
 
-  private Server server = new Server();
-
-  private Thread worker;
-
   @Override
   public void contextDestroyed(ServletContextEvent event) {
     System.out.println(event.toString());
-    worker.interrupt();
+    Thread worker = (Thread) event.getServletContext().getAttribute("worker");
+    if (worker != null)
+      worker.interrupt();
   }
 
   @Override
@@ -41,9 +39,18 @@ public class CarsServlet extends HttpServlet implements ServletContextListener {
     // String path = event.getServletContext().getRealPath("/");
     // Files.write(new File(path, "exception.txt").toPath(), e.toString().getBytes());
 
+    Thread worker = (Thread) event.getServletContext().getAttribute("worker");
+    if (worker != null)
+      worker.interrupt();
+
+    Server server = new Server();
+    event.getServletContext().setAttribute("server", server);
+
     worker = new Thread(server);
     worker.setDaemon(true);
     worker.start();
+
+    event.getServletContext().setAttribute("worker", worker);
   }
 
   @Override
@@ -57,16 +64,22 @@ public class CarsServlet extends HttpServlet implements ServletContextListener {
     builder.setLength(0);
     builder.append("data:");
     builder.append(++counter);
-    builder.append("/").append(server);
-    builder.append("/").append(server.getServerState());
-    builder.append("/").append(server.getServerState().getSerial());
-    builder.append("/").append(server.getServerState().getControllers()[0].getSerial());
 
-    ControllerState[] cons = server.getServerState().getControllers();
-    for (int id = 0; id < cons.length; id++) {
-      builder.append("<br>").append(id);
-      builder.append("=").append(cons[id].toString());
+    Server server = (Server) getServletContext().getAttribute("server");
+
+    if (server != null) {
+      builder.append("/").append(server);
+      builder.append("/").append(server.getServerState());
+      builder.append("/").append(server.getServerState().getSerial());
+      builder.append("/").append(server.getServerState().getControllers()[0].getSerial());
+
+      ControllerState[] cons = server.getServerState().getControllers();
+      for (int id = 0; id < cons.length; id++) {
+        builder.append("<br>").append(id);
+        builder.append("=").append(cons[id].toString());
+      }
     }
+    
     builder.append("\n\n");
 
     PrintWriter writer = response.getWriter();
