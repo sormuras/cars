@@ -20,7 +20,7 @@
     var canvas = document.getElementById("canvas");
     var context = canvas.getContext("2d");
     
-    var source = new EventSource('event');
+    var source = new EventSource('/event');
     source.onmessage = function(e) {
       document.getElementById("state").innerHTML = "data: " + e.data + "<br>origin: " + e.origin;
       
