@@ -6,6 +6,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
+import javax.servlet.AsyncContext;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -23,7 +24,7 @@ public class CarsEventSource extends HttpServlet implements Runnable {
 
   private int counter = 0;
 
-  private Set<HttpServletResponse> responses = new HashSet<>();
+  private Set<AsyncContext> contexts = new HashSet<>();
 
   @Override
   protected void doGet(HttpServletRequest req, HttpServletResponse response) throws ServletException, IOException {
@@ -33,7 +34,9 @@ public class CarsEventSource extends HttpServlet implements Runnable {
     response.setHeader("Pragma", "no-cache"); // HTTP 1.0.
     response.setDateHeader("Expires", 0); // Proxies.
 
-    responses.add(response);
+    
+    AsyncContext ac = req.startAsync(req, response);
+    contexts.add(ac);
     
     Server server = (Server) getServletContext().getAttribute("server");
     server.setSocketTimeoutListener(this);
@@ -61,11 +64,11 @@ public class CarsEventSource extends HttpServlet implements Runnable {
 
     String s = builder.toString();
 
-    Iterator<HttpServletResponse> iterator = responses.iterator();
+    Iterator<AsyncContext> iterator = contexts.iterator();
     while (iterator.hasNext()) {
-      HttpServletResponse response = iterator.next();
+      AsyncContext context = iterator.next();
       try {
-        PrintWriter writer = response.getWriter();
+        PrintWriter writer = context.getResponse().getWriter();
         writer.write(s);
         writer.flush();
       } catch (IOException e) {

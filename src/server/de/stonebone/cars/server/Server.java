@@ -113,7 +113,7 @@ public class Server implements Runnable {
 
   public void run() {
     try (DatagramSocket socket = new DatagramSocket(port)) {
-      socket.setSoTimeout(500);
+      socket.setSoTimeout(2000);
       running = true;
       while (running) {
 
