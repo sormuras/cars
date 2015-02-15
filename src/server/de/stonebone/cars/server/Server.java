@@ -123,7 +123,7 @@ public class Server implements Runnable {
           socket.receive(controllerStatePacket);
         } catch (SocketTimeoutException e) {
           releaseTokens(System.nanoTime());
-          // System.out.println(Arrays.toString(state.getControllers()));
+          System.out.println(Arrays.toString(state.getControllers()));
           continue;
         }
 
