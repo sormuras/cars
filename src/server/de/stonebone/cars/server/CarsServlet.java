@@ -20,11 +20,31 @@ public class CarsServlet extends HttpServlet implements ServletContextListener {
 
   private static final long serialVersionUID = 1L;
 
+  private StringBuilder builder = new StringBuilder();
+
   private int counter = 0;
+
+  private Server server = new Server();
 
   private Thread worker;
 
-  StringBuilder builder = new StringBuilder();
+  @Override
+  public void contextDestroyed(ServletContextEvent event) {
+    System.out.println(event.toString());
+    worker.interrupt();
+  }
+
+  @Override
+  public void contextInitialized(ServletContextEvent event) {
+    System.out.println(event.toString());
+
+    // String path = event.getServletContext().getRealPath("/");
+    // Files.write(new File(path, "exception.txt").toPath(), e.toString().getBytes());
+
+    worker = new Thread(server);
+    worker.setDaemon(true);
+    worker.start();
+  }
 
   @Override
   protected void doGet(HttpServletRequest req, HttpServletResponse response) throws ServletException, IOException {
@@ -40,34 +60,14 @@ public class CarsServlet extends HttpServlet implements ServletContextListener {
 
     ControllerState[] cons = server.getServerState().getControllers();
     for (int id = 0; id < cons.length; id++) {
-      builder.append(",").append(id);
-      builder.append(",").append(cons[id].toString());
+      builder.append("<br>").append(id);
+      builder.append("=").append(cons[id].toString());
     }
     builder.append("\n\n");
 
     PrintWriter writer = response.getWriter();
     writer.write(builder.toString());
     writer.flush();
-  }
-
-  @Override
-  public void contextDestroyed(ServletContextEvent event) {
-    System.out.println(event.toString());
-    worker.interrupt();
-  }
-
-  Server server = new Server();
-
-  @Override
-  public void contextInitialized(ServletContextEvent event) {
-    System.out.println(event.toString());
-
-    // String path = event.getServletContext().getRealPath("/");
-    // Files.write(new File(path, "exception.txt").toPath(), e.toString().getBytes());
-
-    worker = new Thread(server);
-    worker.setDaemon(true);
-    worker.start();
   }
 
 }

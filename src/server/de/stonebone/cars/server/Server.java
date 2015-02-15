@@ -47,6 +47,10 @@ public class Server implements Runnable {
     this.controllerStatePacket = new DatagramPacket(controllerStateBuffer.array(), controllerStateBuffer.capacity());
   }
 
+  public ServerState getServerState() {
+    return state;
+  }
+
   private void handlePacket() throws Exception {
 
     // System.out.println("packet: " + controllerStatePacket);
@@ -80,7 +84,7 @@ public class Server implements Runnable {
     controllerStateBuffer.limit(controllerStatePacket.getLength());
     controller.fromByteBuffer(controllerStateBuffer);
 
-    System.out.println(token + " (" + address + ") -> " + controller);
+    // System.out.println(token + " (" + address + ") -> " + controller);
 
   }
 
@@ -103,14 +107,14 @@ public class Server implements Runnable {
     if (release.size() > 0) {
       for (SocketAddress address : release)
         map.remove(address);
-      System.out.println(String.format("Released %d token(s).", release.size()));
+      // System.out.println(String.format("Released %d token(s).", release.size()));
     }
   }
 
   public void run() {
     try (DatagramSocket socket = new DatagramSocket(port)) {
       socket.setSoTimeout(1000);
-      System.out.println("socket: " + socket.getLocalSocketAddress());
+      // System.out.println("socket: " + socket.getLocalSocketAddress());
 
       while (!Thread.currentThread().isInterrupted()) {
 
@@ -131,10 +135,6 @@ public class Server implements Runnable {
     } catch (Exception e) {
       throw new RuntimeException("Exception in run()!", e);
     }
-  }
-
-  public ServerState getServerState() {
-    return state;
   }
 
 }
