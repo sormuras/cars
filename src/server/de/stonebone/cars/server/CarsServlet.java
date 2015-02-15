@@ -57,6 +57,10 @@ public class CarsServlet extends HttpServlet implements ServletContextListener {
     builder.setLength(0);
     builder.append("data:");
     builder.append(++counter);
+    builder.append("/").append(server);
+    builder.append("/").append(server.getServerState());
+    builder.append("/").append(server.getServerState().getSerial());
+    builder.append("/").append(server.getServerState().getControllers()[0].getSerial());
 
     ControllerState[] cons = server.getServerState().getControllers();
     for (int id = 0; id < cons.length; id++) {

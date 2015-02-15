@@ -6,6 +6,7 @@ import java.net.SocketAddress;
 import java.net.SocketTimeoutException;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.List;
@@ -122,6 +123,7 @@ public class Server implements Runnable {
           socket.receive(controllerStatePacket);
         } catch (SocketTimeoutException e) {
           releaseTokens(System.nanoTime());
+          // System.out.println(Arrays.toString(state.getControllers()));
           continue;
         }
 

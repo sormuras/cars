@@ -22,7 +22,7 @@
     
     var source = new EventSource('/state');
     source.onmessage = function(e) {
-      document.getElementById("state").innerHTML = "data: " + e.data + " origin: " + e.origin;
+      document.getElementById("state").innerHTML = "data: " + e.data + "<br>origin: " + e.origin;
       
       var data = e.data.split(",");
       // console.log(data);
