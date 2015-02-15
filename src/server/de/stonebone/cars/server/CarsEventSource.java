@@ -34,6 +34,9 @@ public class CarsEventSource extends HttpServlet implements Runnable {
     response.setDateHeader("Expires", 0); // Proxies.
 
     responses.add(response);
+    
+    Server server = (Server) getServletContext().getAttribute("server");
+    server.setSocketTimeoutListener(this);
   }
 
   public void run() {

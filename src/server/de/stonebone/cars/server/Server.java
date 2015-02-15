@@ -29,6 +29,7 @@ public class Server implements Runnable {
   private final ServerState state;
   private final long tokenNanosToLive;
   private boolean running;
+  private Runnable socketTimeoutListener;
 
   public Server() {
     this(4, 4231, 10);
@@ -120,6 +121,12 @@ public class Server implements Runnable {
           socket.receive(controllerStatePacket);
         } catch (SocketTimeoutException e) {
           releaseTokens(System.nanoTime());
+          if (socketTimeoutListener != null)
+            try {
+              socketTimeoutListener.run();
+            } catch (Exception listenerExcption) {
+              // ignore
+            }
           continue;
         }
 
@@ -133,6 +140,10 @@ public class Server implements Runnable {
     } catch (Exception e) {
       throw new RuntimeException("Exception in run()!", e);
     }
+  }
+
+  public void setSocketTimeoutListener(Runnable socketTimeoutListener) {
+    this.socketTimeoutListener = socketTimeoutListener;
   }
 
 }
