@@ -1,12 +1,8 @@
 package de.stonebone.cars.util;
 
-import static java.util.concurrent.TimeUnit.MILLISECONDS;
-import static java.util.concurrent.TimeUnit.NANOSECONDS;
-
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
-import java.net.SocketTimeoutException;
 import java.nio.ByteBuffer;
 import java.util.Random;
 
@@ -18,10 +14,8 @@ public class Sender {
 
     // InetAddress host = InetAddress.getLoopbackAddress();
     InetAddress host = InetAddress.getByName("stonebone.de");
-    
-    int port = 4231;
 
-    byte id = Byte.valueOf(args[0]);
+    int port = 4231;
 
     ByteBuffer buffer = ByteBuffer.allocate(123);
 

@@ -6,7 +6,6 @@ import java.net.SocketAddress;
 import java.net.SocketTimeoutException;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.List;
@@ -29,6 +28,7 @@ public class Server implements Runnable {
   private final EnumSet<Token> set;
   private final ServerState state;
   private final long tokenNanosToLive;
+  private boolean running;
 
   public Server() {
     this(4, 4231, 10);
@@ -48,14 +48,15 @@ public class Server implements Runnable {
     this.controllerStatePacket = new DatagramPacket(controllerStateBuffer.array(), controllerStateBuffer.capacity());
   }
 
+  public void close() {
+    this.running = false;
+  }
+
   public ServerState getServerState() {
     return state;
   }
 
   private void handlePacket() throws Exception {
-
-    // System.out.println("packet: " + controllerStatePacket);
-
     long nanos = System.nanoTime();
 
     SocketAddress address = controllerStatePacket.getSocketAddress();
@@ -85,8 +86,6 @@ public class Server implements Runnable {
     controllerStateBuffer.limit(controllerStatePacket.getLength());
     controller.fromByteBuffer(controllerStateBuffer);
 
-    // System.out.println(token + " (" + address + ") -> " + controller);
-
   }
 
   private void releaseTokens(long currentNanos) {
@@ -108,22 +107,19 @@ public class Server implements Runnable {
     if (release.size() > 0) {
       for (SocketAddress address : release)
         map.remove(address);
-      // System.out.println(String.format("Released %d token(s).", release.size()));
     }
   }
 
   public void run() {
     try (DatagramSocket socket = new DatagramSocket(port)) {
-      socket.setSoTimeout(1000);
-      // System.out.println("socket: " + socket.getLocalSocketAddress());
-
-      while (!Thread.currentThread().isInterrupted()) {
+      socket.setSoTimeout(500);
+      running = true;
+      while (running) {
 
         try {
           socket.receive(controllerStatePacket);
         } catch (SocketTimeoutException e) {
           releaseTokens(System.nanoTime());
-          System.out.println(Arrays.toString(state.getControllers()));
           continue;
         }
 
