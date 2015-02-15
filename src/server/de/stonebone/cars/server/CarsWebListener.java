@@ -11,6 +11,7 @@ import javax.servlet.AsyncContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 import javax.servlet.annotation.WebListener;
+import javax.servlet.http.HttpServletResponse;
 
 import de.stonebone.cars.ControllerState;
 
@@ -68,11 +69,20 @@ public class CarsWebListener implements Runnable, ServletContextListener, Serial
     while (iterator.hasNext()) {
       AsyncContext context = iterator.next();
       try {
-        PrintWriter writer = context.getResponse().getWriter();
+        HttpServletResponse response = (HttpServletResponse) context.getResponse();
+        response.setContentType("text/event-stream");
+
+        response.setCharacterEncoding("UTF-8");
+        response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
+        response.setHeader("Pragma", "no-cache");
+        response.setDateHeader("Expires", 0);
+        
+        PrintWriter writer = response.getWriter();
         writer.write(s);
         writer.flush();
       } catch (IOException e) {
         iterator.remove();
+        context.complete();
       }
     }
 

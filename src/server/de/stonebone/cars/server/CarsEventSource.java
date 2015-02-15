@@ -15,13 +15,6 @@ public class CarsEventSource extends HttpServlet {
 
   @Override
   protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-    response.setContentType("text/event-stream");
-
-    response.setCharacterEncoding("UTF-8");
-    response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
-    response.setHeader("Pragma", "no-cache");
-    response.setDateHeader("Expires", 0);
-
     CarsWebListener cars = (CarsWebListener) getServletContext().getAttribute("cars");
     cars.getAsyncContexts().add(request.startAsync(request, response));
   }
