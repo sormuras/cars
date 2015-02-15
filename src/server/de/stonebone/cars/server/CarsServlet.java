@@ -1,9 +1,7 @@
 package de.stonebone.cars.server;
 
 import java.io.IOException;
-import java.io.File;
 import java.io.PrintWriter;
-import java.nio.file.Files;
 
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
@@ -14,8 +12,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import de.stonebone.cars.util.Configuration;
-import de.stonebone.cars.util.Inbox;
+import de.stonebone.cars.ControllerState;
 
 @WebServlet(urlPatterns = "/state")
 @WebListener
@@ -39,15 +36,13 @@ public class CarsServlet extends HttpServlet implements ServletContextListener {
 
     builder.setLength(0);
     builder.append("data:");
-    builder.append(counter);
+    builder.append(++counter);
 
-    Configuration[] cons = Inbox.cons;
-    if (cons != null)
-      for (int id = 0; id < cons.length; id++) {
-        builder.append(",").append(id);
-        builder.append(",").append(cons[id].steering);
-        builder.append(",").append(cons[id].throttle);
-      }
+    ControllerState[] cons = server.getServerState().getControllers();
+    for (int id = 0; id < cons.length; id++) {
+      builder.append(",").append(id);
+      builder.append(",").append(cons[id].toString());
+    }
     builder.append("\n\n");
 
     PrintWriter writer = response.getWriter();
@@ -58,35 +53,19 @@ public class CarsServlet extends HttpServlet implements ServletContextListener {
   @Override
   public void contextDestroyed(ServletContextEvent event) {
     System.out.println(event.toString());
-    Inbox.running = false;
-
-    try {
-      Thread.sleep(333);
-    } catch (InterruptedException e) {
-      //
-    }
+    worker.interrupt();
   }
+
+  Server server = new Server();
 
   @Override
   public void contextInitialized(ServletContextEvent event) {
     System.out.println(event.toString());
 
-    String path = event.getServletContext().getRealPath("/");
+    // String path = event.getServletContext().getRealPath("/");
+    // Files.write(new File(path, "exception.txt").toPath(), e.toString().getBytes());
 
-    worker = new Thread(() -> {
-      Inbox.running = true;
-      try {
-        Inbox.main(new String[0]);
-      } catch (Exception e) {
-        event.getServletContext().log(e.toString());
-        try {
-          Files.write(new File(path, "exception.txt").toPath(), e.toString().getBytes());
-        } catch (Exception e1) {
-          // ignore
-      }
-    }
-  } );
-
+    worker = new Thread(server);
     worker.setDaemon(true);
     worker.start();
   }
