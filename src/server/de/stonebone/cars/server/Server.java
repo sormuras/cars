@@ -135,6 +135,13 @@ public class Server implements Runnable {
         }
 
         handlePacket();
+
+        if (socketTimeoutListener != null)
+          try {
+            socketTimeoutListener.run();
+          } catch (Exception listenerExcption) {
+            // ignore
+          }
       }
 
     } catch (Exception e) {
