@@ -35,7 +35,7 @@ public class CarsEventSource extends HttpServlet implements Runnable {
     response.setDateHeader("Expires", 0); // Proxies.
 
     
-    AsyncContext ac = req.startAsync(req, response);
+    AsyncContext ac = req.startAsync();
     contexts.add(ac);
     
     Server server = (Server) getServletContext().getAttribute("server");
