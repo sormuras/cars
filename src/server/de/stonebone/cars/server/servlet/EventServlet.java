@@ -17,11 +17,10 @@ public class EventServlet extends HttpServlet {
     response.setContentType("text/event-stream");
     response.setCharacterEncoding("UTF-8");
 
+    response.setHeader("X-Accel-Buffering", "no");
     response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
     response.setHeader("Pragma", "no-cache");
-    response.setDateHeader("Expires", 0);
-    
-    response.addHeader("X-Accel-Buffering", "no"); // bypass webserver (nginx, httpd) buffers
+    response.setDateHeader("Expires", 0);    
 
     Main main = (Main) getServletContext().getAttribute("main");
     main.addAsyncContext(request.startAsync(request, response));
