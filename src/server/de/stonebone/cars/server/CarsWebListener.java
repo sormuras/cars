@@ -38,7 +38,7 @@ public class CarsWebListener implements Runnable, ServletContextListener, Serial
     worker.setDaemon(true);
     // worker.start();
 
-    server.setSocketTimeoutListener(this);
+    // server.setSocketTimeoutListener(this);
   }
 
   public Set<AsyncContext> getAsyncContexts() {
