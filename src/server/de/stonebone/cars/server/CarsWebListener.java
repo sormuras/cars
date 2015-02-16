@@ -36,7 +36,7 @@ public class CarsWebListener implements Runnable, ServletContextListener, Serial
 
     Thread worker = new Thread(server);
     worker.setDaemon(true);
-    worker.start();
+    // worker.start();
 
     server.setSocketTimeoutListener(this);
   }
