@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8" />
+<title>sse</title>
+</head>
+<body>
+
+	<h1>SSE!</h1>
+
+	<div id="random">no random data, yet</div>
+
+
+	<script type="text/javascript">
+		var source = new EventSource("EventServlet");
+		source.onmessage = function(e) {
+			document.getElementById("random").innerHTML = "data: " + e.data
+					+ " origin: " + e.origin;
+		}
+	</script>
+
+</body>
+</html>
