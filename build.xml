@@ -30,6 +30,8 @@
 			<src path="src/core" />
 			<src path="src/server" />
 		</javac>
+		
+		<fixcrlf srcdir="war" />
 
 		<war destfile="${cars.war}" needxmlfile="no">
 			<lib dir="war/WEB-INF/lib">
