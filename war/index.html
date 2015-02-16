@@ -8,7 +8,7 @@
   
   <h1>Cars!</h1>
   
-  <div id="state">-</div>
+  <div id="state">no data, yet</div>
   
   <div align="center">
   <canvas id="canvas" width="200" height="100" style="border:1px solid #c3c3c3;">
@@ -20,7 +20,7 @@
     var canvas = document.getElementById("canvas");
     var context = canvas.getContext("2d");
     
-    var source = new EventSource('EventServlet');
+    var source = new EventSource('/EventServlet');
     source.onmessage = function(e) {
       document.getElementById("state").innerHTML = "data: " + e.data + "<br>origin: " + e.origin;
       
