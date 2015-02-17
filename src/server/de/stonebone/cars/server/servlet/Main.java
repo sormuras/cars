@@ -60,7 +60,6 @@ public class Main implements ServletContextListener, Runnable {
     builder.setLength(0);
 
     builder.append("id: ").append(id).append('\n');
-    builder.append("data: ").append(id).append('\n');
 
     ControllerState[] cons = server.getServerState().getControllers();
     for (int i = 0; i < cons.length; i++) {
@@ -81,7 +80,7 @@ public class Main implements ServletContextListener, Runnable {
     int id = 0;
     StringBuilder builder = new StringBuilder();
     while (true) {
-      
+
       try (DatagramChannel channel = server.open()) {
         Thread.yield();
 
@@ -89,7 +88,7 @@ public class Main implements ServletContextListener, Runnable {
 
         // receive and handle inbound packets...
         server.handleChannel(channel);
-        
+
         server.releaseTokens(nanos);
 
         if (nanos < next)

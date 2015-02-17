@@ -22,10 +22,9 @@
     
     var source = new EventSource('/EventServlet');
     source.onmessage = function(e) {
-      document.getElementById("state").innerHTML = "data: " + e.data + "<br>origin: " + e.origin + "<br>id: " + e.id;
+      document.getElementById("state").innerHTML = "data: " + e.data + "<br>origin: " + e.origin + "<br>lastEventId: " + e.lastEventId;
       
-      // var data = e.data.split(",");
-      // console.log(data);
+      // console.dir(e)
       
       context.fillStyle = "#3C5884";
       context.fillRect(0, 0, canvas.width, canvas.height);
