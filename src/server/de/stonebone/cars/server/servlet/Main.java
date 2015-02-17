@@ -60,6 +60,7 @@ public class Main implements ServletContextListener, Runnable {
     builder.setLength(0);
 
     builder.append("id: ").append(id).append('\n');
+    builder.append("data: ").append(id).append('\n');
 
     ControllerState[] cons = server.getServerState().getControllers();
     for (int i = 0; i < cons.length; i++) {
@@ -68,7 +69,7 @@ public class Main implements ServletContextListener, Runnable {
       builder.append("<br>").append('\n');
     }
 
-    builder.append("\n\n");
+    builder.append("\n");
 
     return builder.toString();
   }
