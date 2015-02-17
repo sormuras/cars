@@ -12,8 +12,8 @@ public class Sender {
 
   public static void main(String[] args) throws Exception {
 
-    // InetAddress host = InetAddress.getLoopbackAddress();
-    InetAddress host = InetAddress.getByName("stonebone.de");
+    InetAddress host = InetAddress.getLoopbackAddress();
+    // InetAddress host = InetAddress.getByName("stonebone.de");
 
     int port = 4231;
 

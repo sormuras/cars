@@ -1,10 +1,10 @@
 package de.stonebone.cars.server;
 
-import java.net.DatagramPacket;
-import java.net.DatagramSocket;
+import java.io.IOException;
+import java.net.InetSocketAddress;
 import java.net.SocketAddress;
-import java.net.SocketTimeoutException;
 import java.nio.ByteBuffer;
+import java.nio.channels.DatagramChannel;
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.HashMap;
@@ -21,14 +21,13 @@ public class Server implements Runnable {
     new Server().run();
   }
 
-  private final ByteBuffer controllerStateBuffer;
-  private final DatagramPacket controllerStatePacket;
+  private final ByteBuffer buffer;
   private final Map<SocketAddress, Token> map;
   private final int port;
+  private boolean running;
   private final EnumSet<Token> set;
   private final ServerState state;
   private final long tokenNanosToLive;
-  private boolean running;
 
   public Server() {
     this(4, 4231, 10);
@@ -44,22 +43,34 @@ public class Server implements Runnable {
     if (maxControllers != set.size())
       throw new IllegalStateException(String.format("Expected %d, but got %d controller tokens?!", maxControllers, set.size()));
 
-    this.controllerStateBuffer = ByteBuffer.allocate(ControllerState.CAPACITY);
-    this.controllerStatePacket = new DatagramPacket(controllerStateBuffer.array(), controllerStateBuffer.capacity());
+    this.buffer = ByteBuffer.allocate(ControllerState.CAPACITY);
   }
 
   public void close() {
     this.running = false;
   }
 
+  public int getPort() {
+    return port;
+  }
+
   public ServerState getServerState() {
     return state;
   }
 
-  private void handlePacket() throws Exception {
+  public void handleChannel(DatagramChannel channel) throws IOException {
+    assert !channel.isBlocking();
+    assert channel.getLocalAddress() != null;
+    buffer.clear();
+    SocketAddress address = channel.receive(buffer);
+    if (address == null)
+      return;
+    handleDatagram(address, buffer);
+  }
+
+  private void handleDatagram(SocketAddress address, ByteBuffer buffer) {
     long nanos = System.nanoTime();
 
-    SocketAddress address = controllerStatePacket.getSocketAddress();
     Token token = map.get(address);
     if (token == null) {
       releaseTokens(nanos);
@@ -77,15 +88,21 @@ public class Server implements Runnable {
 
     ControllerState controller = state.getControllers()[token.ordinal()];
 
-    controllerStateBuffer.clear();
-    int serial = controllerStateBuffer.getInt(0);
+    int serial = buffer.getInt(0);
     if (serial <= controller.getSerial())
       return;
 
     controller.setTouched(nanos);
-    controllerStateBuffer.limit(controllerStatePacket.getLength());
-    controller.fromByteBuffer(controllerStateBuffer);
+    buffer.flip();
+    controller.fromByteBuffer(buffer);
+    System.out.println(controller);
+  }
 
+  public DatagramChannel open() throws IOException {
+    DatagramChannel channel = DatagramChannel.open();
+    channel.configureBlocking(false);
+    channel.bind(new InetSocketAddress(port));
+    return channel;
   }
 
   private void releaseTokens(long currentNanos) {
@@ -111,23 +128,12 @@ public class Server implements Runnable {
   }
 
   public void run() {
-    try (DatagramSocket socket = new DatagramSocket(port)) {
-      socket.setSoTimeout(2000);
+    try (DatagramChannel channel = open()) {
+
       running = true;
       while (running) {
-
-        try {
-          socket.receive(controllerStatePacket);
-        } catch (SocketTimeoutException e) {
-          releaseTokens(System.nanoTime());
-          continue;
-        }
-
-        if (controllerStatePacket.getLength() != ControllerState.CAPACITY) {
-          continue;
-        }
-
-        handlePacket();
+        handleChannel(channel);
+        Thread.yield();
       }
 
     } catch (Exception e) {

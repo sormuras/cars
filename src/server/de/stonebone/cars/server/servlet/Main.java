@@ -1,5 +1,6 @@
 package de.stonebone.cars.server.servlet;
 
+import java.nio.channels.DatagramChannel;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -18,26 +19,27 @@ import de.stonebone.cars.server.Server;
 @WebListener
 public class Main implements ServletContextListener, Runnable {
 
-  private final Set<AsyncContext> asyncContexts = Collections.synchronizedSet(new HashSet<>());
-  private Thread asyncThread;
+  private final Set<AsyncContext> browsers = Collections.synchronizedSet(new HashSet<>());
+  private Thread thread;
   private Server server;
 
   public void addAsyncContext(AsyncContext asyncContext) {
     asyncContext.setTimeout(0);
-    synchronized (asyncContexts) {
-      asyncContexts.add(asyncContext);
+    synchronized (browsers) {
+      browsers.add(asyncContext);
     }
   }
 
   public void contextDestroyed(ServletContextEvent event) {
-    asyncThread.interrupt();
-    synchronized (asyncContexts) {
-      for (AsyncContext asyncContext : asyncContexts) {
+    thread.interrupt();
+    server.close();
+    synchronized (browsers) {
+      for (AsyncContext asyncContext : browsers) {
         asyncContext.complete();
       }
     }
     try {
-      asyncThread.join(1000);
+      thread.join(1000);
     } catch (InterruptedException e) {
       // ignore
     }
@@ -46,11 +48,28 @@ public class Main implements ServletContextListener, Runnable {
   public void contextInitialized(ServletContextEvent event) {
     event.getServletContext().setAttribute("main", this);
 
-    asyncThread = new Thread(this, "asyncer");
-    asyncThread.setDaemon(true);
-    asyncThread.start();
+    thread = new Thread(this, "asyncer");
+    thread.setDaemon(true);
+    thread.start();
 
     server = new Server();
+  }
+
+  private String createDataString(StringBuilder builder, int id) {
+    builder.setLength(0);
+
+    builder.append("id: ").append(id).append('\n');
+
+    ControllerState[] cons = server.getServerState().getControllers();
+    for (int i = 0; i < cons.length; i++) {
+      builder.append("data:").append(i);
+      builder.append("=").append(cons[i].toString());
+      builder.append("<br>").append('\n');
+    }
+
+    builder.append("\n\n");
+
+    return builder.toString();
   }
 
   @Override
@@ -58,53 +77,37 @@ public class Main implements ServletContextListener, Runnable {
     int id = 0;
     StringBuilder builder = new StringBuilder();
     while (true) {
-      try {
-        Thread.sleep(500);
-      } catch (InterruptedException e) {
-        return;
-      }
-      synchronized (asyncContexts) {
-        if (asyncContexts.isEmpty())
-          continue;
-        String event = toDataString(builder, ++id);
-        Iterator<AsyncContext> iterator = asyncContexts.iterator();
-        while (iterator.hasNext()) {
-          AsyncContext asyncContext = iterator.next();
-          try {
-            ServletResponse response = asyncContext.getResponse();
-            ServletOutputStream stream = response.getOutputStream();
-            stream.print(event);
-            stream.flush();
-          } catch (Exception e) {
-            iterator.remove();
+      try (DatagramChannel channel = server.open()) {
+        Thread.yield();
+        
+        // receive and handle inbound packets...
+        server.handleChannel(channel);
+
+        // broadcast to connected browsers...
+        synchronized (browsers) {
+          if (browsers.isEmpty())
+            continue;
+          String event = createDataString(builder, ++id);
+          Iterator<AsyncContext> iterator = browsers.iterator();
+          while (iterator.hasNext()) {
+            AsyncContext asyncContext = iterator.next();
+            try {
+              ServletResponse response = asyncContext.getResponse();
+              ServletOutputStream stream = response.getOutputStream();
+              stream.print(event);
+              stream.flush();
+            } catch (Exception e) {
+              iterator.remove();
+            }
           }
         }
+
+      } catch (Exception e) {
+        throw new RuntimeException("Exception in run()!", e);
       }
+
     }
 
-  }
-
-  private String toDataString(StringBuilder builder, int id) {
-    builder.setLength(0);
-
-    builder.append("id: ").append(id).append('\n');
-
-    builder.append("data:");
-
-    builder.append("/").append(server);
-    builder.append("/").append(server.getServerState());
-    builder.append("/").append(server.getServerState().getSerial());
-    builder.append("/").append(server.getServerState().getControllers()[0].getSerial());
-
-    ControllerState[] cons = server.getServerState().getControllers();
-    for (int i = 0; i < cons.length; i++) {
-      builder.append("<br>").append(i);
-      builder.append("=").append(cons[i].toString());
-    }
-
-    builder.append("\n\n");
-
-    return builder.toString();
   }
 
 }
