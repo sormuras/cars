@@ -43,7 +43,7 @@ public class Server implements Runnable {
     if (maxControllers != set.size())
       throw new IllegalStateException(String.format("Expected %d, but got %d controller tokens?!", maxControllers, set.size()));
 
-    this.buffer = ByteBuffer.allocate(ControllerState.CAPACITY);
+    this.buffer = ByteBuffer.allocateDirect(ControllerState.CAPACITY);
   }
 
   public void close() {
@@ -65,6 +65,7 @@ public class Server implements Runnable {
     SocketAddress address = channel.receive(buffer);
     if (address == null)
       return;
+    buffer.flip();
     handleDatagram(address, buffer);
   }
 
@@ -93,9 +94,7 @@ public class Server implements Runnable {
       return;
 
     controller.setTouched(nanos);
-    buffer.flip();
     controller.fromByteBuffer(buffer);
-    System.out.println(controller);
   }
 
   public DatagramChannel open() throws IOException {
