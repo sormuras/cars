@@ -89,10 +89,11 @@ public class Main implements ServletContextListener, Runnable {
 
         // receive and handle inbound packets...
         server.handleChannel(channel);
+        
+        server.releaseTokens(nanos);
 
         if (nanos < next)
           continue;
-
         next = nanos + TimeUnit.SECONDS.toNanos(1);
 
         // broadcast to connected browsers...

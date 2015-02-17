@@ -104,7 +104,7 @@ public class Server implements Runnable {
     return channel;
   }
 
-  private void releaseTokens(long currentNanos) {
+  public void releaseTokens(long currentNanos) {
     List<SocketAddress> release = new ArrayList<>();
     for (Token token : map.values()) {
       ControllerState controller = state.getControllers()[token.ordinal()];

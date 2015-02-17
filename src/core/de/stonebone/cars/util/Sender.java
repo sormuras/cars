@@ -61,7 +61,7 @@ public class Sender {
         //
         // // Print the response
         // System.out.println(Nio.toString(buffer) + " after " + duration + " ms");
-        Thread.sleep(2000);
+        Thread.sleep(200);
       }
     }
 
