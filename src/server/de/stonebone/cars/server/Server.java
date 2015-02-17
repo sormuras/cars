@@ -114,9 +114,7 @@ public class Server implements Runnable {
       long age = currentNanos - touched;
       if (age < tokenNanosToLive)
         continue;
-      controller.setSocketAddress(null);
-      controller.setTouched(0);
-      controller.setSerial(0);
+      controller.clear();
       set.add(token);
       release.add(controller.getSocketAddress());
     }

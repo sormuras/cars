@@ -1,5 +1,7 @@
 package de.stonebone.cars;
 
+import static java.util.Arrays.fill;
+
 import java.net.SocketAddress;
 import java.nio.ByteBuffer;
 import java.util.Arrays;
@@ -25,6 +27,14 @@ public class ControllerState {
   private transient SocketAddress socketAddress;
 
   private transient long touched;
+
+  public void clear() {
+    fill(axis, (byte) 0);
+    fill(button, false);
+    setSerial(0);
+    setSocketAddress(null);
+    setTouched(0);
+  }
 
   public ControllerState fromByteBuffer(ByteBuffer source) {
     serial = source.getInt();
