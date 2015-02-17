@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 import javax.servlet.AsyncContext;
 import javax.servlet.ServletContextEvent;
@@ -74,14 +75,24 @@ public class Main implements ServletContextListener, Runnable {
 
   @Override
   public void run() {
+    long nanos = System.nanoTime();
+    long next = nanos + TimeUnit.SECONDS.toNanos(1);
     int id = 0;
     StringBuilder builder = new StringBuilder();
     while (true) {
+      
       try (DatagramChannel channel = server.open()) {
         Thread.yield();
-        
+
+        nanos = System.nanoTime();
+
         // receive and handle inbound packets...
         server.handleChannel(channel);
+
+        if (nanos < next)
+          continue;
+
+        next = nanos + TimeUnit.SECONDS.toNanos(1);
 
         // broadcast to connected browsers...
         synchronized (browsers) {
