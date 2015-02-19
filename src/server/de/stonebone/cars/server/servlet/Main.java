@@ -76,7 +76,7 @@ public class Main implements ServletContextListener, Runnable {
   @Override
   public void run() {
     long nanos = System.nanoTime();
-    long delta = TimeUnit.MILLISECONDS.toNanos(500);
+    long delta = TimeUnit.MILLISECONDS.toNanos(300);
     long next = nanos + delta;
     int id = 0;
     StringBuilder builder = new StringBuilder();
