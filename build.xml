@@ -9,6 +9,7 @@
 	<property name="version.number" value="0.1" />
 	<property name="dir.out" value="bin/ant" />
 	<property name="cars.war" value="${dir.out}/cars.war" />
+	<property name="cars.jar" value="${dir.out}/cars.jar" />
 
 	<target name="clean">
 		<delete dir="${dir.out}" />
@@ -19,28 +20,54 @@
 		<mkdir dir="${dir.out}" />
 	</target>
 
-	<target name="compile" depends="init" description="compile and jar core sources">
-		<mkdir dir="${dir.out}/classes" />
-		<javac destdir="${dir.out}/classes" debug="no" deprecation="no" optimize="yes" encoding="UTF-8" includeantruntime="no">
+	<target name="compile" depends="compile-remote, compile-war" description="compile all">
+	</target>
+
+	<target name="compile-remote" depends="init" description="compile and jar core sources">
+		<mkdir dir="${dir.out}/classes/remote" />
+		<javac destdir="${dir.out}/classes/remote" debug="no" deprecation="no" optimize="yes" encoding="UTF-8" includeantruntime="no">
 			<classpath>
-				<fileset dir="war/WEB-INF/lib">
-					<include name="*.jar" />
-				</fileset>
+				<fileset dir="lib/remote" includes="**/*.jar" />
+			</classpath>
+			<src path="src/core" />
+			<src path="src/remote" />
+		</javac>
+
+		<jar destfile="${cars.jar}" basedir="${dir.out}/classes/remote">
+			<manifest>
+				<attribute name="Main-Class" value="de.stonebone.cars.remote.Remote" />
+				<attribute name="Class-Path" value="lwjgl.jar" />
+			</manifest>
+		</jar>
+
+		<mkdir dir="${dir.out}/remote" />
+		<copy todir="${dir.out}/remote">
+			<fileset file="${cars.jar}" />
+			<fileset file="lib/remote/lwjgl.jar" />
+			<fileset dir="lib/remote/native" />
+		</copy>
+	</target>
+
+	<target name="compile-war" depends="init" description="compile and jar core sources">
+		<mkdir dir="${dir.out}/classes/war" />
+		<javac destdir="${dir.out}/classes/war" debug="no" deprecation="no" optimize="yes" encoding="UTF-8" includeantruntime="no">
+			<classpath>
+				<fileset dir="lib/server" includes="**/*.jar" />
 			</classpath>
 			<src path="src/core" />
 			<src path="src/server" />
 		</javac>
-		
+
 		<fixcrlf srcdir="war" />
 
 		<war destfile="${cars.war}" needxmlfile="no">
+			<!--
 			<lib dir="war/WEB-INF/lib">
 				<exclude name="servlet-api-3.1.0.jar" />
 			</lib>
-			<classes dir="${dir.out}/classes" />
-			<fileset dir="war">
-				<exclude name="WEB-INF/lib/**/*" />
-			</fileset>
+			-->
+			<classes dir="${dir.out}/classes/war" />
+			<fileset dir="war" />
 		</war>
 	</target>
 
