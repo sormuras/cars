@@ -54,17 +54,16 @@ public class Remote {
   private static InetAddress host;
 
   public static void main(String[] args) throws Exception {
-    host = InetAddress.getByName(System.getProperty("host"));
+    host = InetAddress.getByName(System.getProperty("host", "stonebone.de"));
     new Remote().run();
   }
 
   private GLFWErrorCallback errorCallback;
 
   private GLFWKeyCallback keyCallback = GLFW.GLFWKeyCallback((window, key, scancode, action, mods) -> {
-    // System.out.println(key);
-      if (key == GLFW_KEY_ESCAPE && action == GLFW_RELEASE)
-        glfwSetWindowShouldClose(window, GL_TRUE);
-    });
+    if (key == GLFW_KEY_ESCAPE && action == GLFW_RELEASE)
+      glfwSetWindowShouldClose(window, GL_TRUE);
+  });
 
   private long window;
 
