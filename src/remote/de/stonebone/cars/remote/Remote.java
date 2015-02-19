@@ -38,6 +38,7 @@ import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
+import java.util.concurrent.TimeUnit;
 
 import org.lwjgl.Sys;
 import org.lwjgl.glfw.GLFW;
@@ -101,6 +102,9 @@ public class Remote {
     DatagramPacket packet = new DatagramPacket(buffer.array(), 0, 0, host, 4231);
     ControllerState controller = new ControllerState();
     int serial = 0;
+    long nanos = System.nanoTime();
+    long delta = TimeUnit.MILLISECONDS.toNanos(200);
+    long next = nanos + delta;
 
     FloatBuffer axis;
 
@@ -169,6 +173,11 @@ public class Remote {
         }
 
       glfwSwapBuffers(window);
+      
+      nanos = System.nanoTime();
+      if (nanos < next)
+        continue;
+      next = nanos + delta;
 
       if (axis != null && buttons != null) {
 

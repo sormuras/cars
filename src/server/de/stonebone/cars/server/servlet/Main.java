@@ -76,7 +76,8 @@ public class Main implements ServletContextListener, Runnable {
   @Override
   public void run() {
     long nanos = System.nanoTime();
-    long next = nanos + TimeUnit.SECONDS.toNanos(1);
+    long delta = TimeUnit.MILLISECONDS.toNanos(500);
+    long next = nanos + delta;
     int id = 0;
     StringBuilder builder = new StringBuilder();
     while (true) {
@@ -93,7 +94,7 @@ public class Main implements ServletContextListener, Runnable {
 
         if (nanos < next)
           continue;
-        next = nanos + TimeUnit.SECONDS.toNanos(1);
+        next = nanos + delta;
 
         // broadcast to connected browsers...
         synchronized (browsers) {
