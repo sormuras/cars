@@ -42,6 +42,7 @@
 
 		<mkdir dir="${dir.out}/remote" />
 		<copy todir="${dir.out}/remote">
+			<fileset file="src/remote/cars.ps1" />
 			<fileset file="src/remote/getdown.txt" />
 			<fileset file="${cars.jar}" />
 			<fileset file="lib/remote/lwjgl.jar" />
