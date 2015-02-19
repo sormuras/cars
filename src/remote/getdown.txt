@@ -1,0 +1,13 @@
+appbase = http://stonebone.de/download/cars/remote
+
+class = de.stonebone.cars.remote.Remote
+
+code = cars.jar
+code = lwjgl.jar
+
+resource = windows/x64/lwjgl.dll
+resource = windows/x64/OpenAL32.dll
+resource = windows/x86/lwjgl.dll
+resource = windows/x86/OpenAL32.dll
+resource = macosx/x64/liblwjgl.dylib
+resource = macosx/x64/libopenal.dylib

@@ -42,10 +42,14 @@
 
 		<mkdir dir="${dir.out}/remote" />
 		<copy todir="${dir.out}/remote">
+			<fileset file="src/remote/getdown.txt" />
 			<fileset file="${cars.jar}" />
 			<fileset file="lib/remote/lwjgl.jar" />
 			<fileset dir="lib/remote/native" />
 		</copy>
+
+		<taskdef name="digest" classname="com.threerings.getdown.tools.DigesterTask" classpath="lib/remote/getdown-1.4.jar" />
+		<digest appdir="${dir.out}/remote" />
 	</target>
 
 	<target name="compile-war" depends="init" description="compile and jar core sources">
