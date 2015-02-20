@@ -59,14 +59,17 @@ public class Main implements ServletContextListener, Runnable {
   private String createDataString(StringBuilder builder, int id) {
     builder.setLength(0);
 
-    builder.append("id: ").append(id).append('\n');
+    builder.append("id:").append(id).append('\n');
 
+    builder.append("data:");
     ControllerState[] cons = server.getServerState().getControllers();
     for (int i = 0; i < cons.length; i++) {
-      builder.append("data: ");
       cons[i].toCSV(builder);
-      builder.append('\n');
+      if (i == cons.length -1)
+        break;
+      builder.append(',');
     }
+    builder.append('\n');
 
     builder.append("\n");
 
