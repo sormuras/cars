@@ -97,6 +97,22 @@ public class ControllerState {
     target.put(x);
     return this;
   }
+  
+  public StringBuilder toCSV(StringBuilder builder) {
+    builder.append(axis[0]).append(',');
+    builder.append(axis[1]).append(',');
+    builder.append(axis[2]).append(',');
+    builder.append(axis[3]).append(',');
+    builder.append(button[0]).append(',');
+    builder.append(button[1]).append(',');
+    builder.append(button[2]).append(',');
+    builder.append(button[3]).append(',');
+    builder.append(button[4]).append(',');
+    builder.append(button[5]).append(',');
+    builder.append(button[6]).append(',');
+    builder.append(button[7]);
+    return builder;
+  }
 
   @Override
   public String toString() {

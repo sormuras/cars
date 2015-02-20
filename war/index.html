@@ -5,32 +5,53 @@
   <title>Cars!</title>
 </head>
 <body>
-  
+
   <h1>Cars!</h1>
-  
-  <div id="state">no data, yet</div>
-  
+
+  <!-- div id="state">no data, yet</div -->
+
   <div align="center">
-  <canvas id="canvas" width="200" height="100" style="border:1px solid #c3c3c3;">
+  <canvas id="canvas" width="1024" height="256" style="border:0px solid #c3c3c3;">
     Your browser does not support the HTML5 canvas tag.
   </canvas>
   </div>
-  
+
   <script type="text/javascript">
     var canvas = document.getElementById("canvas");
     var context = canvas.getContext("2d");
-    
+
     var source = new EventSource('/EventServlet');
     source.onmessage = function(e) {
-      document.getElementById("state").innerHTML = "data: " + e.data + "<br>origin: " + e.origin + "<br>lastEventId: " + e.lastEventId;
-      
-      // console.dir(e)
-      
-      context.fillStyle = "#3C5884";
+      // document.getElementById("state").innerHTML = "data: " + e.data + "<br>origin: " + e.origin + "<br>lastEventId: " + e.lastEventId;
+      // console.dir(e);
+
+      var a = e.data.split(",").map(Number);
+      // console.dir(a);
+
+      context.fillStyle = "#FFFFFF"; // "#3C5884";
       context.fillRect(0, 0, canvas.width, canvas.height);
-      context.fillStyle = "#C3B77A";
-      context.fillRect(0, 0, Math.floor(Math.random() * canvas.width) + 1, Math.floor(Math.random() * canvas.height) + 1);
+      
+      cross(0, a[0], a[1]);
+      cross(1, a[11], a[12]);
+      cross(2, a[22], a[23]);
+      cross(3, a[33], a[34]);
+
     };
+
+    function cross(i, x, y) {
+      context.fillStyle = "#C3B77A";
+      if (x < 0)
+        context.fillRect(i*256+127+x, 127, Math.abs(x), 10);
+      else
+        context.fillRect(i*256+127, 127, x, 10);
+
+      context.fillStyle = "#A3B06A";
+      if (y < 0)
+        context.fillRect(i*256+127, 127+y, 10, Math.abs(y));
+      else
+        context.fillRect(i*256+127, 127, 10, y);
+    }
+
   </script>
 
 </body>
