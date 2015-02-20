@@ -103,14 +103,14 @@ public class ControllerState {
     builder.append(axis[1]).append(',');
     builder.append(axis[2]).append(',');
     builder.append(axis[3]).append(',');
-    builder.append(button[0]).append(',');
-    builder.append(button[1]).append(',');
-    builder.append(button[2]).append(',');
-    builder.append(button[3]).append(',');
-    builder.append(button[4]).append(',');
-    builder.append(button[5]).append(',');
-    builder.append(button[6]).append(',');
-    builder.append(button[7]);
+    builder.append(button[0]?'1':'0').append(',');
+    builder.append(button[1]?'1':'0').append(',');
+    builder.append(button[2]?'1':'0').append(',');
+    builder.append(button[3]?'1':'0').append(',');
+    builder.append(button[4]?'1':'0').append(',');
+    builder.append(button[5]?'1':'0').append(',');
+    builder.append(button[6]?'1':'0').append(',');
+    builder.append(button[7]?'1':'0');
     return builder;
   }
 

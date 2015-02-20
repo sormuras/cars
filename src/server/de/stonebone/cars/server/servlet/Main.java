@@ -63,7 +63,7 @@ public class Main implements ServletContextListener, Runnable {
 
     ControllerState[] cons = server.getServerState().getControllers();
     for (int i = 0; i < cons.length; i++) {
-      builder.append("data:");
+      builder.append("data: ");
       cons[i].toCSV(builder);
       builder.append('\n');
     }
