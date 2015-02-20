@@ -8,7 +8,7 @@
 
   <h1>Cars!</h1>
 
-  <!-- div id="state">no data, yet</div -->
+  <div id="state">no data, yet</div>
 
   <div align="center">
   <canvas id="canvas" width="1024" height="256" style="border:0px solid #c3c3c3;">
@@ -22,7 +22,7 @@
 
     var source = new EventSource('/EventServlet');
     source.onmessage = function(e) {
-      // document.getElementById("state").innerHTML = "data: " + e.data + "<br>origin: " + e.origin + "<br>lastEventId: " + e.lastEventId;
+      document.getElementById("state").innerHTML = "data: " + e.data + "<br>origin: " + e.origin + "<br>lastEventId: " + e.lastEventId;
       // console.dir(e);
 
       var a = e.data.split(",").map(Number);
