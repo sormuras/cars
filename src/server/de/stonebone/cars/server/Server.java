@@ -22,6 +22,7 @@ public class Server implements Runnable {
   }
 
   private final ByteBuffer buffer;
+  private final ByteBuffer bufferForServerState;
   private final Map<SocketAddress, Token> map;
   private final int port;
   private boolean running;
@@ -44,6 +45,7 @@ public class Server implements Runnable {
       throw new IllegalStateException(String.format("Expected %d, but got %d controller tokens?!", maxControllers, set.size()));
 
     this.buffer = ByteBuffer.allocateDirect(ControllerState.CAPACITY);
+    this.bufferForServerState = ByteBuffer.allocateDirect(1000);
   }
 
   public void close() {
@@ -66,16 +68,23 @@ public class Server implements Runnable {
     if (address == null)
       return;
     buffer.flip();
-    handleDatagram(address, buffer);
+    if (buffer.remaining() == 0)
+      return;
+    if (buffer.remaining() == 1 && buffer.get(0) == 17) {
+      handleDatagramFromVehicle(channel, address);
+      return;
+    }
+    handleDatagramFromRemote(address, buffer);
   }
 
-  private void handleDatagram(SocketAddress address, ByteBuffer buffer) {
+  private void handleDatagramFromRemote(SocketAddress address, ByteBuffer buffer) {
     long nanos = System.nanoTime();
 
     Token token = map.get(address);
     if (token == null) {
       releaseTokens(nanos);
       if (set.isEmpty())
+        // TODO Send server full message.
         return;
       token = set.iterator().next();
       if (token == null)
@@ -95,6 +104,14 @@ public class Server implements Runnable {
 
     controller.setTouched(nanos);
     controller.fromByteBuffer(buffer);
+  }
+
+  private void handleDatagramFromVehicle(DatagramChannel channel, SocketAddress address) throws IOException {
+    bufferForServerState.clear();
+    state.setSerial(state.getSerial() + 1);
+    state.toByteBuffer(bufferForServerState);
+    bufferForServerState.flip();
+    channel.send(bufferForServerState, address);
   }
 
   public DatagramChannel open() throws IOException {

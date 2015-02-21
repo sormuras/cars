@@ -3,6 +3,7 @@
 	<classpathentry kind="src" path="src/core"/>
 	<classpathentry kind="src" path="src/server"/>
 	<classpathentry kind="src" path="src/remote"/>
+	<classpathentry kind="src" path="src/vehicle"/>
 	<classpathentry kind="lib" path="lib/server/servlet-api-3.1.0.jar" sourcepath="lib/server/servlet-api-3.1.0-src.zip"/>
 	<classpathentry kind="lib" path="lib/remote/lwjgl.jar" sourcepath="lib/remote/lwjgl-src.zip"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>

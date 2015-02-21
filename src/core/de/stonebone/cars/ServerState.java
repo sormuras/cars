@@ -1,6 +1,7 @@
 package de.stonebone.cars;
 
 import java.nio.ByteBuffer;
+import java.util.Arrays;
 
 public class ServerState {
 
@@ -45,5 +46,17 @@ public class ServerState {
     }
     return this;
   }
+
+  @Override
+  public String toString() {
+    StringBuilder builder = new StringBuilder();
+    builder.append("ServerState [serial=");
+    builder.append(serial);
+    builder.append(", controllers=");
+    builder.append(Arrays.toString(controllers));
+    builder.append("]");
+    return builder.toString();
+  }
+
 
 }
