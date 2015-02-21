@@ -20,7 +20,7 @@
 		<mkdir dir="${dir.out}" />
 	</target>
 
-	<target name="compile" depends="compile-remote, compile-war" description="compile all">
+	<target name="compile" depends="compile-remote, compile-vehicle, compile-war" description="compile all">
 	</target>
 
 	<target name="compile-remote" depends="init" description="compile and jar core sources">
@@ -51,6 +51,20 @@
 
 		<taskdef name="digest" classname="com.threerings.getdown.tools.DigesterTask" classpath="lib/remote/getdown-1.4.jar" />
 		<digest appdir="${dir.out}/remote" />
+	</target>
+	
+	<target name="compile-vehicle" depends="init" description="compile and jar vehicle sources">
+		<mkdir dir="${dir.out}/classes/vehicle" />
+		<javac destdir="${dir.out}/classes/vehicle" debug="no" deprecation="no" optimize="yes" encoding="UTF-8" includeantruntime="no">
+			<src path="src/core" />
+			<src path="src/vehicle" />
+		</javac>
+
+		<jar destfile="${dir.out}/cars-vehicle.jar" basedir="${dir.out}/classes/vehicle">
+			<manifest>
+				<attribute name="Main-Class" value="de.stonebone.cars.vehicle.Vehicle" />
+			</manifest>
+		</jar>
 	</target>
 
 	<target name="compile-war" depends="init" description="compile and jar core sources">
